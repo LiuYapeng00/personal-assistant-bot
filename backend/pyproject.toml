@@ -1,0 +1,52 @@
+[project]
+name = "backend"
+version = "0.1.0"
+description = "个人助理 Bot 后端：FastAPI + ReAct Agent + DeepSeek"
+readme = "README.md"
+authors = [
+    { name = "刘亚鹏", email = "11334276+liuliu-yapeng@user.noreply.gitee.com" }
+]
+requires-python = ">=3.12"
+dependencies = [
+    "fastapi>=0.141.1",
+    "openai>=3.6.0",
+    "pydantic>=2.13.5",
+    "python-dotenv>=1.2.3",
+    "requests>=2.34.2",
+    "uvicorn[standard]>=0.52.4",
+]
+
+[project.scripts]
+backend = "app.main:main"
+
+[build-system]
+requires = ["uv_build>=0.12.3,<0.13.0"]
+build-backend = "uv_build"
+
+[tool.uv.build-backend]
+module-name = "app"
+
+[dependency-groups]
+dev = [
+    "pytest>=9.1.1",
+    "pytest-asyncio>=1.4.0",
+    "ruff>=0.16.5",
+]
+
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+src = ["src", "tests"]
+
+[tool.ruff.lint]
+select = [
+    "E",  # pycodestyle 错误
+    "W",  # pycodestyle 警告（尾随空格等）
+    "F",  # pyflakes（未使用导入/变量等）
+    "I",  # isort 导入排序
+    "UP", # pyupgrade 旧语法升级建议
+    "B",  # flake8-bugbear 常见 bug 模式
+]
+
+[tool.ruff.format]
+quote-style = "double"
