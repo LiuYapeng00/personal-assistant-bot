@@ -1,16 +1,10 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useChat } from "./hooks/useChat";
 import { MessageList } from "./components/MessageList";
-import { checkHealth } from "./api/client";
 
 function App() {
-  const { messages, loading, send } = useChat();
+  const { messages, loading, connectionStatus, send } = useChat();
   const [input, setInput] = useState("");
-  const [connected, setConnected] = useState<boolean | null>(null);
-
-  useEffect(() => {
-    checkHealth().then(setConnected);
-  }, []);
 
   const handleSend = () => {
     if (!input.trim() || loading) return;
@@ -25,6 +19,20 @@ function App() {
     }
   };
 
+  const statusLabel =
+    connectionStatus === "connected"
+      ? "已连接"
+      : connectionStatus === "reconnecting"
+        ? "重连中..."
+        : "未连接";
+
+  const statusColor =
+    connectionStatus === "connected"
+      ? "bg-green-400"
+      : connectionStatus === "reconnecting"
+        ? "bg-yellow-400"
+        : "bg-red-400";
+
   return (
     <div className="h-screen flex flex-col bg-white">
       {/* Header */}
@@ -33,20 +41,8 @@ function App() {
           个人助理 Bot
         </h1>
         <div className="flex items-center gap-1.5 text-xs text-gray-400">
-          <span
-            className={`w-2 h-2 rounded-full ${
-              connected === null
-                ? "bg-yellow-400"
-                : connected
-                ? "bg-green-400"
-                : "bg-red-400"
-            }`}
-          />
-          {connected === null
-            ? "检查中..."
-            : connected
-            ? "已连接"
-            : "未连接"}
+          <span className={`w-2 h-2 rounded-full ${statusColor}`} />
+          {statusLabel}
         </div>
       </div>
 

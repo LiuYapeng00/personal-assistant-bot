@@ -18,3 +18,19 @@ export interface DisplayMessage {
   trace?: TraceStep[];
   loading?: boolean;
 }
+
+export type WsEventType = "token" | "tool_call" | "tool_result" | "done" | "error";
+
+export interface WsEvent {
+  type: WsEventType;
+  content?: string;
+  step?: number;
+  thought?: string;
+  tool?: string;
+  input?: Record<string, unknown>;
+  result?: string;
+  full_reply?: string;
+  message?: string;
+}
+
+export type ConnectionStatus = "connected" | "disconnected" | "reconnecting";

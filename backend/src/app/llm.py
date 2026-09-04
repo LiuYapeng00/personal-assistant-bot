@@ -53,6 +53,21 @@ def chat(messages: list[dict]) -> str:
     return (resp.choices[0].message.content or "").strip()
 
 
+def chat_stream(messages: list[dict]):
+    """流式调用 DeepSeek，逐 token yield 文本片段。"""
+    stream = _client.chat.completions.create(
+        model=config.MODEL,
+        messages=messages,
+        temperature=0.3,
+        timeout=REQUEST_TIMEOUT,
+        stream=True,
+    )
+    for chunk in stream:
+        delta = chunk.choices[0].delta
+        if delta.content:
+            yield delta.content
+
+
 def extract_json(text: str) -> dict:
     """
     从模型输出里宽松提取 JSON。
