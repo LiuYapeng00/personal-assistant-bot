@@ -1,22 +1,12 @@
 """ReAct 主循环：推理 - 行动 - 观察，直到给出最终回答或达到轮数上限。"""
 
 from .llm import MAX_ROUNDS, SYSTEM_PROMPT, chat, parse_decision
-from .tools import TOOLS
+from .tools import registry
 
 
 def _run_tool(tool: str, tool_input) -> str:
-    """执行工具并统一返回字符串结果；工具不存在或异常都转为可回传的文本。"""
-    func = TOOLS.get(tool)
-    if func is None:
-        return f"未知工具，可用工具：{', '.join(TOOLS)}"
-
-    try:
-        result = func(**(tool_input if isinstance(tool_input, dict) else {}))
-        if isinstance(result, dict):
-            return str(result)
-        return str(result)
-    except Exception as e:  # noqa: BLE001 - 工具异常统一转为 Observation
-        return f"工具执行失败: {e}"
+    """执行工具并统一返回字符串结果；调用注册表完成校验、执行与异常兜底。"""
+    return registry.call(tool, tool_input if isinstance(tool_input, dict) else {})
 
 
 def run_agent(user_message: str, history: list | None = None) -> tuple[str, list]:

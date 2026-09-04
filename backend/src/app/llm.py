@@ -12,25 +12,24 @@ import re
 from openai import OpenAI
 
 from . import config
+from .tools import registry
 
 _client = OpenAI(api_key=config.API_KEY, base_url=config.BASE_URL)
 
-# 固定描述 ReAct 输出格式的 system prompt
-SYSTEM_PROMPT = """你是一个乐于助人的个人助理。
+# 固定描述 ReAct 输出格式的 system prompt（可用工具由注册表动态生成）
+SYSTEM_PROMPT = f"""你是一个乐于助人的个人助理。
 你可以调用以下工具来回答用户的问题，工具以 JSON 对象返回结果，你也只输出 JSON。
 
 可用工具：
-- get_weather_by_city: 参数 {"city": "城市名"}，返回该城市的实时天气
-- calculator: 参数 {"expression": "四则运算表达式"}，如 "1 + 2 * 3"
-- search_notes: 参数 {"keyword": "关键词"}，在本地笔记中搜索匹配内容
+{registry.describe_all()}
 
 你必须严格按下面的 JSON 之一输出，不要输出任何多余文字：
 
 如果还需要调用工具，输出：
-{"thought": "你的思考", "action": "工具名", "action_input": {"key": "value"}}
+{{"thought": "你的思考", "action": "工具名", "action_input": {{"key": "value"}}}}
 
 如果已经有把握回答用户，输出：
-{"final_answer": "给用户的最终回答"}
+{{"final_answer": "给用户的最终回答"}}
 
 注意：
 - action 必须是上面列出的工具名之一

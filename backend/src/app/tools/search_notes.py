@@ -2,8 +2,9 @@
 
 from pathlib import Path
 
-# 搜索根目录：backend/notes（未创建时返回空结果）
-NOTES_DIR = Path(__file__).resolve().parent.parent.parent / "notes"
+# 搜索根目录：backend/notes
+# __file__ = backend/src/app/tools/search_notes.py，向上回溯到 backend 根
+NOTES_DIR = Path(__file__).resolve().parent.parent.parent.parent / "notes"
 
 
 def _match(needle: str, haystack: str) -> bool:

@@ -2,7 +2,6 @@
 查询指定城市天气（基于 Open-Meteo 免费 API）
 """
 
-import sys
 import time
 from functools import wraps
 
@@ -81,15 +80,13 @@ def get_coordinates(city: str):
     """通过 Open-Meteo Geocoding API 获取城市经纬度"""
     url = "https://geocoding-api.open-meteo.com/v1/search"
     params = {"name": city, "count": 1, "language": "zh", "format": "json"}
-    # 演示：GET 请求 + params + headers + timeout
     resp = requests.get(url, params=params, headers=HEADERS, timeout=10)
     resp.raise_for_status()
     data = resp.json()
 
     results = data.get("results")
     if not results:
-        print(f"未找到城市：{city}")
-        sys.exit(1)
+        raise ValueError(f"未找到城市：{city}")
     location = results[0]
     return (
         location["name"],
@@ -153,41 +150,3 @@ def get_weather_by_city(city: str) -> dict:
         "humidity": humidity,
         "wind_speed": wind_speed,
     }
-
-
-# def main():
-#     print("argv:", sys.argv)
-#     if len(sys.argv) < 2:
-#         city = input("请输入城市名（中英文均可）：").strip()
-#         if not city:
-#             print("城市名不能为空")
-#             sys.exit(1)
-#     else:
-#         city = sys.argv[1]
-
-#     print(f"正在查询 {city} 的天气...")
-
-#     try:
-#         info = get_weather_by_city(city)
-#         # 打印信息，使用 info 字典中的字段
-#         print("\n" + "=" * 40)
-#         print(f"城市：{info['city_name']}（{info['country']}）")
-#         print(f"经纬度：{info['latitude']:.4f}, {info['longitude']:.4f}")
-#         print(f"天气：{info['weather_text']}")
-#         print(f"当前温度：{info['temperature']}°C")
-#         print(f"今日最高/最低：{info['max_temp']}°C / {info['min_temp']}°C")
-#         print(f"相对湿度：{info['humidity']}%")
-#         print(f"风速：{info['wind_speed']} km/h")
-#         print("=" * 40)
-#     except (
-#         requests.exceptions.RequestException,
-#         json.JSONDecodeError,
-#         ValueError,
-#     ) as e:
-#         # 这里可以针对不同异常输出更友好的提示，但为了简洁，统一捕获
-#         print(f"查询失败：{e}")
-#         sys.exit(1)
-
-
-# if __name__ == "__main__":
-#     main()

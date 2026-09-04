@@ -1,4 +1,4 @@
-"""Day1: ReAct 主循环测试（mock DeepSeek，验证循环终止与轮数上限）。"""
+"""ReAct 主循环测试（mock DeepSeek，验证循环终止与轮数上限）。"""
 
 import pytest
 
